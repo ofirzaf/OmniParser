@@ -43,7 +43,7 @@ class VLMAgent:
             self.model = "gpt-4o-2024-11-20"
         elif model == "omniparser + R1":
             self.model = "deepseek-r1-distill-llama-70b"
-        elif model == "omniparser + phi4":
+        elif model == "omniparser + phi-4":
             self.model = "phi-4-mini-instruct"
         elif model == "omniparser + qwen2.5vl":
             self.model = "qwen2.5-vl-72b-instruct"
@@ -223,8 +223,9 @@ Here is the list of all detected bounding boxes by IDs on the screen and their d
 
 Your available "Next Action" only include:
 - type: types a string of text.
+- left_click: move mouse to box id and left click.
 - right_click: move mouse to box id and right click.
-- double_click: move mouse to box id and double left click.
+- double_click: move mouse to box id and double click.
 - hover: move mouse to box id.
 - scroll_up: scrolls the screen up to view previous content.
 - scroll_down: scrolls the screen down, when the desired button is not visible, or you need to see more content. 

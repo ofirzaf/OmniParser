@@ -11,3 +11,15 @@ def encode_image(image_path):
     """Encode image file to base64."""
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
+    
+def model_supports_vision(model_name: str):
+    model_name = model_name.lower() if model_name else "dummy"
+    hints = ["multimodal", "vl", "vision"]
+
+    return any(h in model_name for h in hints)
+
+def model_on_prem(model_name: str):
+    model_name = model_name.lower() if model_name else "dummy"
+    hints = ["qwen", "phi-4"]
+
+    return any(h in model_name for h in hints)

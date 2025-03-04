@@ -302,7 +302,7 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
             with gr.Column():
                 model = gr.Dropdown(
                     label="Model",
-                    choices=["omniparser + gpt-4o", "omniparser + o1", "omniparser + o3-mini", "omniparser + R1", "omniparser + qwen2.5vl", "claude-3-5-sonnet-20241022", "omniparser + phi4"],
+                    choices=["omniparser + gpt-4o", "omniparser + o1", "omniparser + o3-mini", "omniparser + R1", "omniparser + qwen2.5vl", "claude-3-5-sonnet-20241022", "omniparser + phi-4"],
                     value="omniparser + qwen2.5vl",
                     interactive=True,
                 )
@@ -360,7 +360,7 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
             provider_choices = ["openai"]
         elif model_selection == "omniparser + R1":
             provider_choices = ["groq"]
-        elif model_selection == "omniparser + phi4":
+        elif model_selection == "omniparser + phi-4":
             provider_choices = ["groq"]
         elif model_selection == "omniparser + qwen2.5vl":
             provider_choices = ["dashscope"]

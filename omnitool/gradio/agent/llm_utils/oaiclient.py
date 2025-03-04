@@ -2,7 +2,7 @@ import os
 import logging
 import base64
 import requests
-from .utils import is_image_path, encode_image
+from .utils import is_image_path, encode_image, model_on_prem
 
 def run_oai_interleaved(messages: list, system: str, model_name: str, api_key: str, max_tokens=256, temperature=0, provider_base_url: str = "https://api.openai.com/v1"):    
     headers = {"Content-Type": "application/json",
@@ -21,7 +21,7 @@ def run_oai_interleaved(messages: list, system: str, model_name: str, api_key: s
                         if is_image_path(cnt) and 'o3-mini' not in model_name:
                             # 03 mini does not support images
                             base64_image = encode_image(cnt)
-                            if "qwen" in model_name:
+                            if model_on_prem(model_name):
                                 content = {"type": "image", "image": f"data:image;base64,{base64_image}"}
                             else:
                                 content = {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
@@ -45,7 +45,7 @@ def run_oai_interleaved(messages: list, system: str, model_name: str, api_key: s
         final_messages = [{"role": "user", "content": messages}]
 
     # print(f"\nmessages for gpt model: {final_messages}\n")
-    if "qwen" in model_name:
+    if model_on_prem(model_name):
         payload = {
             "inputs": final_messages,
             "parameters": {
