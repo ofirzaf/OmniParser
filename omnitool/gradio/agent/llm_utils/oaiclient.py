@@ -29,7 +29,11 @@ def run_oai_interleaved(messages: list, system: str, model_name: str, api_key: s
                             content = {"type": "text", "text": cnt}
                     else:
                         # in this case it is a text block from anthropic
-                        content = {"type": "text", "text": str(cnt)}
+                        try:
+                            if cnt.type == "text":
+                                content = {"type": "text", "text": cnt.text}
+                        except AttributeError:
+                            content = {"type": "text", "text": str(cnt)}
                         
                     contents.append(content)
                     
@@ -78,7 +82,7 @@ def run_oai_interleaved(messages: list, system: str, model_name: str, api_key: s
 
     try:
         if "qwen" in model_name:
-            text = response.json()['generated_text']
+            text = response.json()['generated_text'].replace('"Next Action": "click"', '"Next Action": "left_click"')
             token_usage = 0
         else:
             text = response.json()['choices'][0]['message']['content']

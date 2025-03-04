@@ -243,33 +243,6 @@ Output format:
 }}
 ```
 
-One Example:
-```json
-{{  
-    "Reasoning": "The current screen shows google result of amazon, in previous action I have searched amazon on google. Then I need to click on the first search results to go to amazon.com.",
-    "Next Action": "left_click",
-    "Box ID": m
-}}
-```
-
-Another Example:
-```json
-{{
-    "Reasoning": "The current screen shows the front page of amazon. There is no previous action. Therefore I need to type "Apple watch" in the search bar.",
-    "Next Action": "type",
-    "Box ID": n,
-    "value": "Apple watch"
-}}
-```
-
-Another Example:
-```json
-{{
-    "Reasoning": "The current screen does not show 'submit' button, I need to scroll down to see if the button is available.",
-    "Next Action": "scroll_down",
-}}
-```
-
 IMPORTANT NOTES:
 1. You should only give a single action at a time."""
         thinking_model = "r1" in self.model
@@ -286,6 +259,7 @@ IMPORTANT NOTES:
 6. The tasks involve buying multiple products or navigating through multiple pages. You should break it into subgoals and complete each subgoal one by one in the order of the instructions.
 7. avoid choosing the same action/elements multiple times in a row, if it happens, reflect to yourself, what may have gone wrong, and predict a different action.
 8. If you are prompted with login information page or captcha page, or you think it need user's permission to do the next action, you should say "Next Action": "None" in the json field.
+9. When you want to click on an icon use a double click. You should say "Next Action": "double_click" in the json field.
 """ 
 
         return main_section
