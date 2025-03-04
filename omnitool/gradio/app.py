@@ -51,15 +51,15 @@ def setup_state(state):
     if "messages" not in state:
         state["messages"] = []
     if "model" not in state:
-        state["model"] = "omniparser + gpt-4o"
+        state["model"] = "omniparser + qwen2.5vl"
     if "provider" not in state:
-        state["provider"] = "openai"
+        state["provider"] = "dashscope"
     if "openai_api_key" not in state:  # Fetch API keys from environment variables
-        state["openai_api_key"] = os.getenv("OPENAI_API_KEY", "")
+        state["openai_api_key"] = os.getenv("OPENAI_API_KEY", "1")
     if "anthropic_api_key" not in state:
-        state["anthropic_api_key"] = os.getenv("ANTHROPIC_API_KEY", "")
+        state["anthropic_api_key"] = os.getenv("ANTHROPIC_API_KEY", "1")
     if "api_key" not in state:
-        state["api_key"] = ""
+        state["api_key"] = "1"
     if "auth_validated" not in state:
         state["auth_validated"] = False
     if "responses" not in state:
@@ -302,8 +302,8 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
             with gr.Column():
                 model = gr.Dropdown(
                     label="Model",
-                    choices=["omniparser + gpt-4o", "omniparser + o1", "omniparser + o3-mini", "omniparser + R1", "omniparser + qwen2.5vl", "claude-3-5-sonnet-20241022"],
-                    value="omniparser + gpt-4o",
+                    choices=["omniparser + gpt-4o", "omniparser + o1", "omniparser + o3-mini", "omniparser + R1", "omniparser + qwen2.5vl", "claude-3-5-sonnet-20241022", "omniparser + phi4"],
+                    value="omniparser + qwen2.5vl",
                     interactive=True,
                 )
             with gr.Column():
@@ -320,21 +320,21 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
                 provider = gr.Dropdown(
                     label="API Provider",
                     choices=[option.value for option in APIProvider],
-                    value="openai",
+                    value="dashscope",
                     interactive=False,
                 )
             with gr.Column(2):
                 api_key = gr.Textbox(
                     label="API Key",
                     type="password",
-                    value=state.value.get("api_key", ""),
+                    value=state.value.get("api_key", "1"),
                     placeholder="Paste your API key here",
                     interactive=True,
                 )
 
     with gr.Row():
         with gr.Column(scale=8):
-            chat_input = gr.Textbox(show_label=False, placeholder="Type a message to send to Omniparser + X ...", container=False)
+            chat_input = gr.Textbox(value="Open Google Chrome browser", show_label=False, placeholder="Type a message to send to Omniparser + X ...", container=False)
         with gr.Column(scale=1, min_width=50):
             submit_button = gr.Button(value="Send", variant="primary")
         with gr.Column(scale=1, min_width=50):
@@ -360,6 +360,8 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
             provider_choices = ["openai"]
         elif model_selection == "omniparser + R1":
             provider_choices = ["groq"]
+        elif model_selection == "omniparser + phi4":
+            provider_choices = ["groq"]
         elif model_selection == "omniparser + qwen2.5vl":
             provider_choices = ["dashscope"]
         else:
@@ -371,7 +373,7 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
 
         # Update state
         state["provider"] = default_provider_value
-        state["api_key"] = state.get(f"{default_provider_value}_api_key", "")
+        state["api_key"] = state.get(f"{default_provider_value}_api_key", "1")
 
         # Calls to update other components UI
         provider_update = gr.update(
@@ -392,7 +394,7 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
     def update_provider(provider_value, state):
         # Update state
         state["provider"] = provider_value
-        state["api_key"] = state.get(f"{provider_value}_api_key", "")
+        state["api_key"] = state.get(f"{provider_value}_api_key", "1")
         
         # Calls to update other components UI
         api_key_update = gr.update(

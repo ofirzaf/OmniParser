@@ -4,10 +4,25 @@ from PIL import Image
 import io
 import base64
 from typing import Dict
+import sys
+
+try:
+    import intel_extension_for_pytorch as ipex
+    device = 'xpu' 
+except ImportError:
+    print("Package not found. Try installing it with \
+           >>>python -m pip install python -m pip install torch==2.5.1+cxx11.abi torchvision==0.20.1+cxx11.abi \
+             torchaudio==2.5.1+cxx11.abi intel-extension-for-pytorch==2.5.10+xpu \
+             --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/lnl/us/")
+
+
 class Omniparser(object):
     def __init__(self, config: Dict):
         self.config = config
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        if 'intel_extension_for_pytorch' in sys.modules:
+            device = 'xpu'
+        else:
+            device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         self.som_model = get_yolo_model(model_path=config['som_model_path'])
         self.caption_model_processor = get_caption_model_processor(model_name=config['caption_model_name'], model_name_or_path=config['caption_model_path'], device=device)

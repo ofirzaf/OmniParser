@@ -24,6 +24,7 @@ def get_screenshot(resize: bool = False, target_width: int = 1920, target_height
         if resize and screenshot.size != (target_width, target_height):
             screenshot = screenshot.resize((target_width, target_height))
         screenshot.save(path)
-        return screenshot, path
+        print(f"resolved path: {path.resolve()}")
+        return screenshot, path.resolve()
     except Exception as e:
         raise ToolError(f"Failed to capture screenshot: {str(e)}")

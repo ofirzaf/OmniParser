@@ -43,6 +43,8 @@ class VLMAgent:
             self.model = "gpt-4o-2024-11-20"
         elif model == "omniparser + R1":
             self.model = "deepseek-r1-distill-llama-70b"
+        elif model == "omniparser + phi4":
+            self.model = "phi-4-mini-instruct"
         elif model == "omniparser + qwen2.5vl":
             self.model = "qwen2.5-vl-72b-instruct"
         elif model == "omniparser + o1":
@@ -101,6 +103,7 @@ class VLMAgent:
                 provider_base_url="https://api.openai.com/v1",
                 temperature=0,
             )
+            print(f"\n\nvlm_response gpt 4o: {vlm_response}\n")
             print(f"oai token usage: {token_usage}")
             self.total_token_usage += token_usage
             if 'gpt' in self.model:
@@ -109,7 +112,7 @@ class VLMAgent:
                 self.total_cost += (token_usage * 15 / 1000000)  # https://openai.com/api/pricing/
             elif 'o3-mini' in self.model:
                 self.total_cost += (token_usage * 1.1 / 1000000)  # https://openai.com/api/pricing/
-        elif "r1" in self.model:
+        elif "r1" in self.model or "phi-4" in self.model:
             vlm_response, token_usage = run_groq_interleaved(
                 messages=planner_messages,
                 system=system,
@@ -117,6 +120,7 @@ class VLMAgent:
                 api_key=self.api_key,
                 max_tokens=self.max_tokens,
             )
+            # print(f'vlm_response groq: {vlm_response}')
             print(f"groq token usage: {token_usage}")
             self.total_token_usage += token_usage
             self.total_cost += (token_usage * 0.99 / 1000000)
@@ -208,8 +212,7 @@ class VLMAgent:
         self.api_response_callback(response)
 
     def _get_system_prompt(self, screen_info: str = ""):
-        main_section = f"""
-You are using a Windows device.
+        main_section = f"""You are using a Windows device.
 You are able to use a mouse and keyboard to interact with the computer based on the given task and screenshot.
 You can only interact with the desktop GUI (no terminal or application menu access).
 
@@ -220,9 +223,8 @@ Here is the list of all detected bounding boxes by IDs on the screen and their d
 
 Your available "Next Action" only include:
 - type: types a string of text.
-- left_click: move mouse to box id and left clicks.
-- right_click: move mouse to box id and right clicks.
-- double_click: move mouse to box id and double clicks.
+- right_click: move mouse to box id and right click.
+- double_click: move mouse to box id and double left click.
 - hover: move mouse to box id.
 - scroll_up: scrolls the screen up to view previous content.
 - scroll_down: scrolls the screen down, when the desired button is not visible, or you need to see more content. 
@@ -268,20 +270,14 @@ Another Example:
 ```
 
 IMPORTANT NOTES:
-1. You should only give a single action at a time.
-
-"""
+1. You should only give a single action at a time."""
         thinking_model = "r1" in self.model
         if not thinking_model:
             main_section += """
-2. You should give an analysis to the current screen, and reflect on what has been done by looking at the history, then describe your step-by-step thoughts on how to achieve the task.
-
-"""
+2. You should give an analysis to the current screen, and reflect on what has been done by looking at the history, then describe your step-by-step thoughts on how to achieve the task."""
         else:
             main_section += """
-2. In <think> XML tags give an analysis to the current screen, and reflect on what has been done by looking at the history, then describe your step-by-step thoughts on how to achieve the task. In <output> XML tags put the next action prediction JSON.
-
-"""
+2. In <think> XML tags give an analysis to the current screen, and reflect on what has been done by looking at the history, then describe your step-by-step thoughts on how to achieve the task. In <output> XML tags put the next action prediction JSON."""
         main_section += """
 3. Attach the next action prediction in the "Next Action".
 4. You should not include other actions, such as keyboard shortcuts.
