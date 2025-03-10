@@ -297,7 +297,7 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
         gr.Markdown(INTRO_TEXT, elem_classes="markdown-text")
 
 
-    with gr.Accordion("Settings", open=True): 
+    with gr.Accordion("Settings", open=False): 
         with gr.Row():
             with gr.Column():
                 model = gr.Dropdown(
@@ -334,11 +334,24 @@ with gr.Blocks(theme=gr.themes.Default()) as demo:
 
     with gr.Row():
         with gr.Column(scale=8):
-            chat_input = gr.Textbox(value="Open Google Chrome browser", show_label=False, placeholder="Type a message to send to Omniparser + X ...", container=False)
+            chat_input = gr.Textbox(show_label=False, placeholder="Type a message to send to Omniparser + X ...", container=False)
         with gr.Column(scale=1, min_width=50):
             submit_button = gr.Button(value="Send", variant="primary")
         with gr.Column(scale=1, min_width=50):
             stop_button = gr.Button(value="Stop", variant="secondary")
+    gr.Examples(
+        [
+            ["Open Google Chrome browser"],
+            ["Help me buy some milk on instacart"],
+            ["Go to omniparser github page, find the clone link, and open the terminal to clone it"],
+            ["Clone OmniParser repository from github"],
+            ["Help me check how much space is left on this device"],
+            ["Help me check if there is any windows update?"],
+            ["Download the stock price of Intel over the last 1 month from nasdaq.com"]
+        ],
+        label="Examples",
+        inputs=chat_input,
+    )
 
     with gr.Row():
         with gr.Column(scale=1):
